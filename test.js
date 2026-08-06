@@ -5,6 +5,16 @@
  */
 const casiDiTest = [
   {
+    ral: 5000,
+    atteso: { nettoAnnuale: 4839.65, nettoMensile: 372.28 },
+    note: "condizione di capienza NON soddisfatta (IRPEF lorda < detrazione standard): trattamento integrativo assente",
+  },
+  {
+    ral: 12000,
+    atteso: { nettoAnnuale: 11972.81, nettoMensile: 920.99 },
+    note: "condizione di capienza soddisfatta: trattamento integrativo pieno (1.125€) + somma non imponibile (5,3%)",
+  },
+  {
     ral: 18000,
     atteso: { nettoAnnuale: 16221.31, nettoMensile: 1247.79 },
     note: "somma non imponibile (comma 4, 4,8%); trattamento integrativo assente (nessuna incapienza)",

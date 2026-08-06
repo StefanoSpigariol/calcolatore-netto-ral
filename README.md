@@ -29,7 +29,7 @@ Il calcolo procede così (i nomi tra parentesi sono le funzioni in `calc.js`):
 4. **Detrazioni da lavoro dipendente** (art. 13 TUIR) — funzione decrescente del reddito, azzerata oltre 50.000€ (`calcolaDetrazioniLavoroDipendente`).
 5. **Ulteriore detrazione cuneo fiscale** per redditi 20.000-40.000€ — 1.000€ flat fino a 32.000€, poi decrescente fino a 40.000€ (`calcolaUlterioreDetrazioneCuneo`).
 6. **IRPEF netta** = max(0, IRPEF lorda − detrazioni − ulteriore detrazione) (`calcolaIRPEFNetta`).
-7. **Trattamento integrativo** — si aggiunge al netto (non è una trattenuta); pieno per redditi ≤15.000€, decrescente fino a 28.000€, ridotto di 75€ dal 2025 (`calcolaTrattamentoIntegrativo`).
+7. **Trattamento integrativo** — si aggiunge al netto (non è una trattenuta); condizionato a una soglia di capienza (spetta solo se l'IRPEF lorda supera la detrazione da lavoro dipendente — altrimenti è zero, anche per redditi ≤15.000€), pieno per redditi ≤15.000€ dove la capienza è soddisfatta, decrescente fino a 28.000€, ridotto di 75€ dal 2025 (`calcolaTrattamentoIntegrativo`).
 8. **Somma non imponibile** per redditi ≤20.000€ — percentuale (7,1%/5,3%/4,8%) applicata alla RAL, si aggiunge al netto (`calcolaSommaNonImponibile20k`).
 9. **Addizionale regionale Lombardia** — scaglioni da 1,23% a 1,73% (`calcolaAddizionaleRegionale`).
 10. **Addizionale comunale Milano** — 0,8% flat sull'intero imponibile, ma solo se questo supera 23.000€ (soglia secca, non a scaglioni) (`calcolaAddizionaleComunale`).
@@ -45,6 +45,12 @@ Oltre al dettaglio riga per riga, la pagina mostra un riepilogo (calcolato in `a
 - **Totale trattenute** = contributi + imposte.
 - **Bonus e agevolazioni in busta paga** = trattamento integrativo + somma non imponibile (punti 7, 8), mostrati separatamente e non sottratti dalle imposte: per redditi bassi possono superare le imposte dovute, e un "totale imposte" negativo sarebbe fuorviante da leggere.
 - **Aliquota effettiva** = (RAL − netto annuale) / RAL, cioè la quota di RAL che non arriva in tasca. Coincide per costruzione con (totale trattenute − bonus) / RAL.
+
+### Punto segnalato: netto che supera la RAL per RAL molto basse (~9.400-11.800€)
+
+Il trattamento integrativo (punto 7) ha una condizione di capienza (D.L. 3/2020, art. 1: "qualora l'imposta lorda [...] sia di importo superiore a quello della detrazione spettante") che vale per l'intera misura, non solo per la fascia 15.000-28.000€ — un dettaglio inizialmente implementato in modo errato (il codice dava l'importo fisso di 1.125€ a chiunque avesse RC≤15.000€, indipendentemente dalla capienza) e poi corretto. Con la condizione applicata correttamente, per RAL indicativamente tra 9.400€ e 11.800€ il trattamento integrativo (1.125€, appena scattata la capienza) e la somma non imponibile del comma 4 (fino a 636€) si sommano superando il totale di contributi e imposte dovuti a quel livello di reddito, facendo sì che il netto annuale calcolato superi la RAL lorda.
+
+Non abbiamo trovato, né nel testo di legge primario (Normattiva) né nella documentazione tecnica di un software paghe consultata come riscontro indipendente ([kb.hunext.com](https://kb.hunext.com/knowledge-base/trattamento-integrativo-e-ulteriore-detrazione-2/), che tratta le due misure come voci di calcolo separate e indipendenti), una clausola che eviti questa sovrapposizione tra trattamento integrativo e somma non imponibile — il calcolo resta quindi fedele al testo letterale delle norme, senza un floor artificiale. Il fenomeno riguarda RAL molto basse, fuori dal range tipico di un impiegato standard a tempo pieno assunto per l'intero anno (il caso standard dichiarato in cima a questo documento).
 
 ## Fonti primarie
 
@@ -74,7 +80,7 @@ Le regole fiscali sono state verificate solo su fonti ufficiali (non su siti div
 
 ## Test
 
-`test.js` confronta l'output di `calc.js` con 4 casi di riferimento (RAL 18.000 / 25.000 / 35.000 / 60.000€) calcolati **a mano, in modo indipendente** dal codice — per evitare che il test validi solo se stesso. I casi sono scelti per coprire le diverse combinazioni di regole attive (soglia dei 20.000€, soglia dei 32.000€, nessuna agevolazione). Apri `test.html` per vedere l'esito.
+`test.js` confronta l'output di `calc.js` con 6 casi di riferimento (RAL 5.000 / 12.000 / 18.000 / 25.000 / 35.000 / 60.000€) calcolati **a mano, in modo indipendente** dal codice — per evitare che il test validi solo se stesso. I casi sono scelti per coprire le diverse combinazioni di regole attive, inclusa la condizione di capienza del trattamento integrativo (5.000€ = capienza non soddisfatta, 12.000€ = capienza soddisfatta) oltre alle soglie dei 20.000€ e 32.000€. Apri `test.html` per vedere l'esito.
 
 ## Struttura dei file
 

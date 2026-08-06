@@ -125,8 +125,14 @@ const Calc = (() => {
 
   // D.L. 3/2020 art. 1, ridotto di 75€ da L. 207/2024 art. 1 c.3.
   // Periodo di lavoro nell'anno assunto sempre pieno (365/365).
+  // Condizione di capienza (art. 1: "qualora l'imposta lorda [...] sia di
+  // importo superiore a quello della detrazione spettante"): vale per
+  // l'intera misura, non solo per la fascia 15.000-28.000€. Per RAL molto
+  // basse, dove l'IRPEF lorda non supera nemmeno la detrazione standard,
+  // il trattamento integrativo è zero (non l'importo fisso).
   function calcolaTrattamentoIntegrativo(rc, irpefLorda, detrazioni, rules = RULES_2026) {
     const cfg = rules.trattamentoIntegrativo;
+    if (irpefLorda <= detrazioni) return 0;
     let base;
     if (rc <= cfg.sogliaMin) {
       base = cfg.importoBase;

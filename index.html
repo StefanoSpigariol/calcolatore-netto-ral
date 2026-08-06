@@ -126,7 +126,7 @@
           <li>Detrazioni da lavoro dipendente (art. 13 TUIR).</li>
           <li>Somma non imponibile per redditi ≤ 20.000€ (L. 207/2024, art. 1 comma 4).</li>
           <li>Ulteriore detrazione cuneo fiscale per redditi 20.000-40.000€ (L. 207/2024, art. 1 comma 6).</li>
-          <li>Trattamento integrativo, ridotto di 75€ dal 2025 (D.L. 3/2020, come modificato).</li>
+          <li>Trattamento integrativo, ridotto di 75€ dal 2025 (D.L. 3/2020, come modificato), condizionato a una soglia di capienza: spetta solo se l'IRPEF lorda supera la detrazione da lavoro dipendente.</li>
           <li>Addizionale regionale Lombardia, a scaglioni (1,23%–1,73%).</li>
           <li>Addizionale comunale Milano: 0,8% flat, esente sotto i 23.000€ di imponibile.</li>
           <li>Numero di mensilità selezionabile (12/13/14): la RAL si assume già comprensiva di eventuali mensilità aggiuntive; cambia solo come viene distribuita nell'anno, non il calcolo annuale.</li>
@@ -140,6 +140,17 @@
           <li>TFR escluso dal netto (retribuzione differita, non liquidità periodica).</li>
           <li>La "somma non imponibile" per redditi ≤ 20.000€ è modellata come addizione diretta al netto anziché come riduzione della base imponibile IRPEF/addizionali, per l'incertezza sull'esatto ordine di calcolo nelle fonti disponibili.</li>
         </ul>
+
+        <h3>Punto segnalato: netto che supera la RAL per RAL molto basse</h3>
+        <p>
+          Per RAL indicativamente tra 9.400€ e 11.800€, il trattamento integrativo (1.125€) e la somma non
+          imponibile (fino a 636€) si sommano superando il totale di contributi e imposte dovuti a quel
+          livello di reddito: il netto annuale calcolato può superare la RAL lorda. Non abbiamo trovato,
+          nel testo di legge primario né nella documentazione tecnica di un software paghe consultata,
+          una clausola che eviti questa sovrapposizione tra le due misure — il calcolo resta quindi fedele
+          al testo letterale delle norme. Questo scenario riguarda RAL molto basse, fuori dal range tipico
+          di un impiegato standard a tempo pieno assunto per l'intero anno.
+        </p>
 
         <p class="fonti-link">Fonti e dettagli completi delle formule: vedi <a href="README.md">README.md</a>.</p>
       </section>
