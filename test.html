@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test — Calcolatore RAL → Netto</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    #test-summary { font-weight: 700; margin-bottom: 1rem; }
+    #test-summary.pass { color: #1a6b4a; }
+    #test-summary.fail { color: #b3261e; }
+    li.pass { color: #1a6b4a; }
+    li.fail { color: #b3261e; font-weight: 700; }
+    li { margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Test di verifica — calc.js</h1>
+  <p>Confronto tra i valori calcolati da <code>calc.js</code> e i valori attesi, calcolati a mano in modo indipendente.</p>
+  <p id="test-summary"></p>
+  <div id="test-output"></div>
+
+  <script src="calc.js"></script>
+  <script src="test.js"></script>
+</body>
+</html>

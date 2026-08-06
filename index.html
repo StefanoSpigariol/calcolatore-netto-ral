@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calcolatore RAL → Netto | Prototipo JetHR</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <p class="eyebrow">Prototipo · Product Builder exercise per JetHR</p>
+      <h1>Calcolo netto dipendente dalla RAL <span>(aggiornato 2026)</span></h1>
+      <p class="hero-sub">
+        Proiezione della retribuzione netta annuale e mensile a partire dalla RAL, per il caso
+        standard: dipendente a tempo indeterminato, Milano, nessuna agevolazione particolare.
+      </p>
+    </header>
+
+    <main>
+      <section class="calc-card">
+        <div class="calc-col calc-col-input">
+          <div class="field">
+            <label for="ral-input">Stipendio (RAL)</label>
+            <div class="input-with-icon">
+              <span class="icon">€</span>
+              <input type="number" id="ral-input" min="0" step="100" placeholder="Es. 30000" inputmode="decimal" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="mensilita-input">Mensilità</label>
+            <div class="select-wrap">
+              <select id="mensilita-input">
+                <option value="12">12 mensilità</option>
+                <option value="13" selected>13 mensilità</option>
+                <option value="14">14 mensilità</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="calcola-btn" type="button">Calcola</button>
+          <p id="error-message" role="alert" hidden></p>
+        </div>
+
+        <div class="calc-divider" aria-hidden="true"></div>
+
+        <div class="calc-col calc-col-result">
+          <span class="col-label">Risultato</span>
+
+          <div class="netto-hero">
+            <span class="netto-hero-label">Netto annuale</span>
+            <span class="netto-hero-value" id="netto-annuale">—</span>
+          </div>
+
+          <div class="netto-secondary">
+            <span>Netto mensile <small id="mensilita-label">(13 mensilità)</small></span>
+            <strong id="netto-mensile">—</strong>
+          </div>
+
+          <div id="risultati" hidden aria-live="polite">
+            <dl class="riepilogo">
+              <dt>Contributi previdenziali (INPS)</dt>
+              <dd id="totale-contributi"></dd>
+              <dt>Imposte (IRPEF + addizionali)</dt>
+              <dd id="totale-imposte"></dd>
+              <dt id="bonus-label" hidden>Bonus e agevolazioni in busta paga</dt>
+              <dd id="totale-bonus" class="positivo" hidden></dd>
+              <dt class="riepilogo-tot-label">Totale trattenute</dt>
+              <dd id="totale-trattenute" class="riepilogo-tot-value"></dd>
+              <dt>Aliquota effettiva</dt>
+              <dd id="aliquota-effettiva"></dd>
+            </dl>
+
+            <h2 class="breakdown-title">Dettaglio del calcolo</h2>
+            <dl id="breakdown" class="breakdown"></dl>
+          </div>
+        </div>
+      </section>
+
+      <section class="info-card">
+        <span class="col-label">Come si calcola</span>
+
+        <div class="step">
+          <p><strong>Step 1. Dalla RAL ai contributi INPS.</strong> Il dipendente versa il 9,19% della RAL come contributi previdenziali a carico suo (non è una tassa: finanzia la sua futura pensione).</p>
+          <p class="formula">RAL − Contributi INPS = Imponibile fiscale</p>
+        </div>
+
+        <div class="step">
+          <p><strong>Step 2. Dall'imponibile fiscale all'IRPEF lorda.</strong> Si applicano gli scaglioni progressivi: 23% fino a 28.000€, 33% da 28.000€ a 50.000€, 43% oltre.</p>
+          <p class="formula">Imponibile fiscale a scaglioni = IRPEF lorda</p>
+        </div>
+
+        <div class="step">
+          <p><strong>Step 3. Le detrazioni riducono l'IRPEF.</strong> Si sottraggono la detrazione standard da lavoro dipendente (art. 13 TUIR) e, per redditi tra 20.000€ e 40.000€, l'ulteriore detrazione da cuneo fiscale.</p>
+          <p class="formula">IRPEF lorda − Detrazioni = IRPEF netta</p>
+        </div>
+
+        <div class="step">
+          <p><strong>Step 4. Si aggiungono le addizionali e gli eventuali bonus.</strong> All'IRPEF netta si sommano l'addizionale regionale Lombardia e quella comunale di Milano. Per i redditi più bassi (fino a 28.000€) si aggiungono invece al netto due bonus in busta paga: il trattamento integrativo e, sotto i 20.000€, la somma non imponibile.</p>
+          <p class="formula">IRPEF netta + Addizionali = Totale imposte</p>
+        </div>
+
+        <div class="step">
+          <p><strong>Step 5. Si ottiene il netto.</strong> Il netto annuale è la RAL meno tutte le trattenute (contributi + imposte) più gli eventuali bonus; il netto mensile è quello annuale diviso per il numero di mensilità scelto.</p>
+          <p class="formula">RAL − Totale trattenute + Bonus = Netto annuale</p>
+        </div>
+
+        <p class="fonti-link">Ogni passaggio è verificabile: vedi il dettaglio del calcolo qui sopra dopo aver premuto "Calcola", e le fonti normative nel <a href="README.md">README.md</a>.</p>
+      </section>
+
+      <section class="info-card">
+        <span class="col-label">Assunzioni e semplificazioni</span>
+
+        <h3>Caso standard modellato</h3>
+        <ul>
+          <li>Dipendente a tempo indeterminato, full-time, per l'intero anno.</li>
+          <li>Residenza fiscale a Milano (Lombardia).</li>
+          <li>Nessuna agevolazione fiscale/contributiva particolare, nessun altro reddito, nessun carico di famiglia.</li>
+        </ul>
+
+        <h3>Regole applicate (anno fiscale 2026)</h3>
+        <ul>
+          <li>Contributi INPS a carico dipendente: 9,19% flat sulla RAL.</li>
+          <li>IRPEF a scaglioni: 23% fino a 28.000€, 33% da 28.000€ a 50.000€, 43% oltre 50.000€.</li>
+          <li>Detrazioni da lavoro dipendente (art. 13 TUIR).</li>
+          <li>Somma non imponibile per redditi ≤ 20.000€ (L. 207/2024, art. 1 comma 4).</li>
+          <li>Ulteriore detrazione cuneo fiscale per redditi 20.000-40.000€ (L. 207/2024, art. 1 comma 6).</li>
+          <li>Trattamento integrativo, ridotto di 75€ dal 2025 (D.L. 3/2020, come modificato).</li>
+          <li>Addizionale regionale Lombardia, a scaglioni (1,23%–1,73%).</li>
+          <li>Addizionale comunale Milano: 0,8% flat, esente sotto i 23.000€ di imponibile.</li>
+          <li>Numero di mensilità selezionabile (12/13/14): la RAL si assume già comprensiva di eventuali mensilità aggiuntive; cambia solo come viene distribuita nell'anno, non il calcolo annuale.</li>
+        </ul>
+
+        <h3>Semplificazioni escluse (fuori scope, da discutere)</h3>
+        <ul>
+          <li>Nessun massimale contributivo INPS né aliquota aggiuntiva 1% (rilevanti solo per RAL molto alte o anzianità contributiva ante 1996).</li>
+          <li>Nessuna detrazione per carichi di famiglia o altri oneri deducibili/detraibili (spese mediche, mutuo, ecc.).</li>
+          <li>Nessuna variazione per part-time, altri CCNL, altre regioni o comuni.</li>
+          <li>TFR escluso dal netto (retribuzione differita, non liquidità periodica).</li>
+          <li>La "somma non imponibile" per redditi ≤ 20.000€ è modellata come addizione diretta al netto anziché come riduzione della base imponibile IRPEF/addizionali, per l'incertezza sull'esatto ordine di calcolo nelle fonti disponibili.</li>
+        </ul>
+
+        <p class="fonti-link">Fonti e dettagli completi delle formule: vedi <a href="README.md">README.md</a>.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="calc.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
